@@ -1,13 +1,13 @@
-import React from 'react'
+import React, { Fragment } from 'react';
+import UserResults from '../components/users/UserResults';
+
 
 const Home = () => {
   return (
-    <div>
+    <Fragment>
+      <UserResults />
+    </Fragment>
+  );
+};
 
-<h1 className="text-6xl">Welcome</h1>
-{process.env.REACT_APP_KEY}
-    </div>
-  )
-}
-
-export default Home
+export default Home;
