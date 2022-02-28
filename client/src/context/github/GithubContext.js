@@ -10,6 +10,7 @@ export const GithubProvider = ({ children }) => {
   //* INITIALSTATE SET TO AN OBJECT
   const intitialState = {
     users: [],
+    user: {},
     loading: false
   };
   //*USEREDUCER HOOK
@@ -39,13 +40,34 @@ export const GithubProvider = ({ children }) => {
     });
   };
 
+  //* ASYNC FUNCTION TO FETCH REQUEST TO GET A SINGLE USER
+  const getUser = async (login) => {
+    //   set loading sets to true via reducer and the GET_USERS sets it back to false
+    setLoading();
 
-//   *CLEAR THE USERS FROM THE STATE
-const clearUsers =()=> {
+    const response = await fetch(`${GITHUB_URL}/users/${login}`, {
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`
+      }
+    });
+    // redirect if not an endpoint and get the 404, else return the data
+    if (response.status === 404) {
+      window.location = '/notfound';
+    } else {
+      const data = await response.json();
+      dispatch({
+        type: 'GET_USER',
+        payload: data
+      });
+    }
+  };
+
+  //   *CLEAR THE USERS FROM THE STATE
+  const clearUsers = () => {
     dispatch({
-        type:'CLEAR_USERS',
-    })
-}
+      type: 'CLEAR_USERS'
+    });
+  };
   // * SET LOADING
   const setLoading = () =>
     dispatch({
@@ -56,9 +78,11 @@ const clearUsers =()=> {
     <GithubContext.Provider
       value={{
         users: state.users,
+        user: state.user,
         loading: state.loading,
         searchUsers,
-        clearUsers
+        clearUsers,
+        getUser
       }}>
       {children}
     </GithubContext.Provider>
