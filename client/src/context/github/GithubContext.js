@@ -15,19 +15,27 @@ export const GithubProvider = ({ children }) => {
   //*USEREDUCER HOOK
   const [state, dispatch] = useReducer(githubReducer, intitialState);
 
-  //* ASYNC FUNCTION TO FETCH REQUEST TO GET USER DATA-TESTING PURPOSES
-  const fetchUsers = async () => {
+  //* ASYNC FUNCTION TO FETCH REQUEST TO SEARCH USERS RESULTS
+  const searchUsers = async (text) => {
     //   set loading sets to true via reducer and the GET_USERS sets it back to false
     setLoading();
-    const response = await fetch(`${GITHUB_URL}/users`, {
+
+    // for query params to search text values
+    const params = new URLSearchParams({
+      q: text
+    });
+
+    const response = await fetch(`${GITHUB_URL}/search/users?${params}`, {
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`
       }
     });
-    const data = await response.json();
+
+    // There is an items array in the json object returned, thats why it's destructured here
+    const { items } = await response.json();
     dispatch({
       type: 'GET_USERS',
-      payload: data
+      payload: items
     });
   };
 
@@ -42,7 +50,7 @@ export const GithubProvider = ({ children }) => {
       value={{
         users: state.users,
         loading: state.loading,
-        fetchUsers
+        searchUsers
       }}>
       {children}
     </GithubContext.Provider>
