@@ -1,4 +1,3 @@
-import React from 'react';
 
 const githubReducer = (state, action) => {
   switch (action.type) {
