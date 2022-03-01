@@ -27,3 +27,37 @@ export const searchUsers = async (text) => {
   // refactored to just a return
   return items;
 };
+
+//* ASYNC FUNCTION TO FETCH REQUEST TO GET A SINGLE USER
+export const getUser = async (login) => {
+  const response = await fetch(`${GITHUB_URL}/users/${login}`, {
+    headers: {
+      Authorization: `token ${GITHUB_TOKEN}`
+    }
+  });
+  // redirect if not an endpoint and get the 404, else return the data
+  if (response.status === 404) {
+    window.location = '/notfound';
+  } else {
+    const data = await response.json();
+    return data;
+  }
+};
+
+//* ASYNC FUNCTION TO FETCh USER REPOS
+export const getUserRepos = async (login) => {
+  //   for query params to search text values
+  const params = new URLSearchParams({
+    sort: 'created',
+    per_page: 10
+  });
+
+  const response = await fetch(`${GITHUB_URL}/users/${login}/repos?${params}`, {
+    headers: {
+      Authorization: `token ${GITHUB_TOKEN}`
+    }
+  });
+
+  const data = await response.json();
+  return data;
+};
